@@ -15,15 +15,11 @@ class Slots(commands.Cog):
         self.economy = Economy()
 
     def check_bet(self, ctx: commands.Context, bet: int=DEFAULT_BET):
-        bet = int(bet)
-        if bet <= 0 or bet > 3:
-            raise commands.errors.BadArgument()
-        current = self.economy.get_entry(ctx.author.id)[2]
-        if bet > current:
+        bet > current:
             raise InsufficientFundsException(current, bet)
 
     @commands.command(
-        brief='Slot machine\nbet must be 1-3',
+        brief='Slot machine\bet,
         usage='slots *[bet]'
     )
     async def slots(self, ctx: commands.Context, bet: int=1):
@@ -106,33 +102,6 @@ class Slots(commands.Cog):
         )
 
         os.remove(fp)
-
-    @commands.command(
-        brief=f"Purchase credits. Each credit is worth ${DEFAULT_BET}.",
-        usage="buyc [credits]",
-        aliases=["buy", "b"]
-    )
-    async def buyc(self, ctx: commands.Context, amount_to_buy: int):
-        user_id = ctx.author.id
-        profile = self.economy.get_entry(user_id)
-        cost = amount_to_buy * DEFAULT_BET
-        if profile[1] >= cost:
-            self.economy.add_money(user_id, cost*-1)
-            self.economy.add_credits(user_id, amount_to_buy)
-        await ctx.invoke(self.client.get_command('money'))
-
-    @commands.command(
-        brief=f'Sell credits. Each credit is worth ${DEFAULT_BET}.',
-        usage="sellc [credits]",
-        aliases=["sell", "s"]
-    )
-    async def sellc(self, ctx: commands.Context, amount_to_sell: int):
-        user_id = ctx.author.id
-        profile = self.economy.get_entry(user_id)
-        if profile[2] >= amount_to_sell:
-            self.economy.add_credits(user_id, amount_to_sell*-1)
-            self.economy.add_money(user_id, amount_to_sell*DEFAULT_BET)
-        await ctx.invoke(self.client.get_command('money'))
-
+        
 def setup(client: commands.Bot):
     client.add_cog(Slots(client))
