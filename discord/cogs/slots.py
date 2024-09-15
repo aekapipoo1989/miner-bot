@@ -14,14 +14,6 @@ class Slots(commands.Cog):
         self.client = client
         self.economy = Economy()
 
-    def check_bet(self, ctx: commands.Context, bet: int=DEFAULT_BET):
-        bet > current:
-            raise InsufficientFundsException(current, bet)
-
-    @commands.command(
-        brief='Slot machine\bet,
-        usage='slots *[bet]'
-    )
     async def slots(self, ctx: commands.Context, bet: int=1):
         self.check_bet(ctx, bet=bet)
         path = os.path.join(ABS_PATH, 'modules/')
@@ -66,39 +58,6 @@ class Slots(commands.Cog):
             save_all=True,
             append_images=images[1:], # append all images after first to first
             duration=50  # duration of each slide (ms)
-        )
-
-        # win logic
-        result = ('lost', bet)
-        self.economy.add_credits(ctx.author.id, bet*-1)       
-        # (1+s1)%6 gets the symbol 0-5 inclusive
-        if (1+s1)%6 == (1+s2)%6 == (1+s3)%6:
-            symbol = (1+s1)%6
-            reward = [4, 80, 40, 25, 10, 5][symbol] * bet
-            result = ('won', reward)
-            self.economy.add_credits(ctx.author.id, reward)
-
-        embed = make_embed(
-            title=(
-                f'You {result[0]} {result[1]} credits'+
-                ('.' if result[0] == 'lost' else '!') # happy or sad based on outcome
-            ),
-            description=(
-                'You now have ' +
-                f'**{self.economy.get_entry(ctx.author.id)[2]}** ' +
-                'credits.'
-            ),
-            color=(
-                discord.Color.red() if result[0] == "lost"
-                else discord.Color.green()
-            )
-        )
-
-        file = discord.File(fp, filename=fp)
-        embed.set_image(url=f"attachment://{fp}") # none of this makes sense to me :)
-        await ctx.send(
-            file=file,
-            embed=embed
         )
 
         os.remove(fp)
